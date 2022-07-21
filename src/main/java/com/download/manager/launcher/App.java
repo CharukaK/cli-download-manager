@@ -1,6 +1,10 @@
 package com.download.manager.launcher;
 
 
+import com.download.manager.download.DownloadManager;
+import com.download.manager.download.http.HTTPDownload;
+import com.download.manager.download.http.HttpDownloadConfig;
+import com.download.manager.exceptions.DownloadException;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
@@ -9,6 +13,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,7 +33,13 @@ public class App {
      * @param args
      */
     public static void main(String[] args) {
-        Arrays.stream(args).forEach(System.out::println);
+        try {
+            HttpDownloadConfig httpConfig = new HttpDownloadConfig("http://0.0.0.0:8080/one-piece.mkv");
+            DownloadManager.getInstance().submitDownload(new HTTPDownload().init(httpConfig));
+            DownloadManager.getInstance().shutdown();
+        } catch (DownloadException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     static void downloadUsingFTP() {
@@ -39,8 +50,28 @@ public class App {
             ftpClient.login("user", "123");
             ftpClient.enterLocalPassiveMode();
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-            String filePath = "/%5BSubsPlease%5D%20Kanojo%2C%20Okarishimasu%20-%2015%20%28720p%29%20%5BC7804134%5D.mkv";
-            ftpClient.listFiles()
+            String filePath = "/one-piece.mkv";
+            ftpClient.setRestartOffset(0);// restart byte position
+            File file = new File(URLDecoder.decode("%5BSubsPlease%5D%20Kanojo%2C%20Okarishimasu%20-%2015%20%28720p%29%20%5BC7804134%5D.mkv", StandardCharsets.UTF_8.toString()));
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file));
+            byte[] buffer = new byte[8192];
+            InputStream bufferedInputStream = ftpClient.retrieveFileStream(URLDecoder.decode(filePath, StandardCharsets.UTF_8.toString()));
+            int bytesRead = 0;
+
+            while ((bytesRead = bufferedInputStream.read(buffer)) != -1) {
+                bufferedOutputStream.write(buffer, 0, bytesRead);
+            }
+
+            boolean success = ftpClient.completePendingCommand();
+            if (success) {
+                System.out.println("File #2 has been downloaded successfully.");
+            }
+            bufferedOutputStream.close();
+            bufferedInputStream.close();
+            ftpClient.disconnect();
+            // check if mlistFile() method is supported else list files in the path and get the name
+// retrieve file size
+// ftpClient.getSize(URLDecoder.decode("[SubsPlease] One Piece - 1025 (720p) [60BD17DF].mkv", StandardCharsets.UTF_8.toString()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

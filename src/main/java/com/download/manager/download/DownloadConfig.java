@@ -3,22 +3,17 @@ package com.download.manager.download;
 import com.download.manager.util.Constants;
 
 public class DownloadConfig {
-    private String url;
     private int retryCount;
     private int retryInterval;
+    private String outputDir;
+    private String fileName;
+    private int tries;
 
-    public DownloadConfig(String url) {
-        this.url = url;
+    public DownloadConfig() {
         this.retryCount = Constants.DEFAULT_RETRY_COUNT;
         this.retryInterval = Constants.DEFAULT_RETRY_INTERVAL;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
+        this.outputDir = Constants.OUTPUT_DIR;
+        this.tries = 0;
     }
 
     public int getRetryCount() {
@@ -35,5 +30,29 @@ public class DownloadConfig {
 
     public void setRetryInterval(int retryInterval) {
         this.retryInterval = retryInterval;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getOutputDir() {
+        return outputDir;
+    }
+
+    public void setOutputDir(String outputDir) {
+        this.outputDir = outputDir;
+    }
+
+    public int getTries() {
+        return tries;
+    }
+
+    public void increaseTries() {
+        this.tries++;
     }
 }

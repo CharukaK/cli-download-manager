@@ -22,13 +22,21 @@
             <artifactId>commons-cli</artifactId>
             <version>${commons.cli.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
             <version>${commons.net.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -70,6 +78,7 @@
         <junit.version>4.11</junit.version>
         <commons.cli.version>1.4</commons.cli.version>
         <commons.net.version>3.8.0</commons.net.version>
+        <log4j.version>2.18.0</log4j.version>
     </properties>
 
 </project>

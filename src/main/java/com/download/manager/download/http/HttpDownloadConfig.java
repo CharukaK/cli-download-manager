@@ -2,6 +2,8 @@ package com.download.manager.download.http;
 
 import com.download.manager.download.DownloadConfig;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,11 +11,12 @@ import java.util.Map;
  * Download config for HTTP resources
  */
 public class HttpDownloadConfig extends DownloadConfig {
-    private Map<String, String> headers;
+    private final Map<String, String> headers;
+    private final String url;
 
     public HttpDownloadConfig(String url) {
-        super(url);
         headers = new HashMap<>();
+        this.url = url;
     }
 
     public Map<String, String> getHeaders() {
@@ -27,5 +30,9 @@ public class HttpDownloadConfig extends DownloadConfig {
      */
     public void addHeader(String key, String value) {
         headers.put(key, value);
+    }
+
+    public String getUrl() {
+        return url;
     }
 }
