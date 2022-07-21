@@ -2,6 +2,7 @@ package com.download.manager.download.http;
 
 import com.download.manager.download.Download;
 import com.download.manager.download.DownloadConfig;
+import com.download.manager.download.DownloadManager;
 import com.download.manager.exceptions.DownloadException;
 
 import java.io.BufferedInputStream;
@@ -41,6 +42,8 @@ public class HTTPDownload extends Download {
     public void run() {
         try {
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setConnectTimeout(1000);
+            httpURLConnection.setReadTimeout(1000);
             httpURLConnection.connect();
             Map<String, List<String>> fileHeaders = httpURLConnection.getHeaderFields();
             if (fileHeaders.get("Content-Disposition") != null && fileHeaders.get("Content-Disposition").size() > 0) {
@@ -78,10 +81,11 @@ public class HTTPDownload extends Download {
             bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(httpURLConnection.getInputStream());
             byte[] buffer = new byte[8192];
-
+            System.out.println("download started");
             int byteCount = 0;
             while ((byteCount = bufferedInputStream.read(buffer)) != -1) {
                 bufferedOutputStream.write(buffer, 0, byteCount);
+
             }
 
             bufferedInputStream.close();
@@ -90,6 +94,11 @@ public class HTTPDownload extends Download {
             httpURLConnection.disconnect();
         } catch (IOException e) {
             downloadConfig.increaseTries();
+            try {
+                DownloadManager.getInstance().submitDownload(new HTTPDownload().init(downloadConfig));
+            } catch (DownloadException ex) {
+                // if downloadConfig exists no exception would occur
+            }
 //            throw new RuntimeException(e);
         }
     }
@@ -99,6 +108,7 @@ public class HTTPDownload extends Download {
         outputPathBuilder.append(downloadConfig.getOutputDir());
         if (downloadConfig.getFileName().startsWith("/") && downloadConfig.getOutputDir().endsWith("/")) {
             outputPathBuilder.append(downloadConfig.getFileName().substring(1));
+        } else if (!downloadConfig.getOutputDir().endsWith("/") && downloadConfig.getFileName().startsWith("/")){
         } else {
             outputPathBuilder.append(downloadConfig.getFileName());
         }

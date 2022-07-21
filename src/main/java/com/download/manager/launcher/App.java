@@ -34,7 +34,7 @@ public class App {
      */
     public static void main(String[] args) {
         try {
-            HttpDownloadConfig httpConfig = new HttpDownloadConfig("http://0.0.0.0:8080/one-piece.mkv");
+            HttpDownloadConfig httpConfig = new HttpDownloadConfig("https://speed.hetzner.de/100MB.bin");
             DownloadManager.getInstance().submitDownload(new HTTPDownload().init(httpConfig));
             DownloadManager.getInstance().shutdown();
         } catch (DownloadException e) {
