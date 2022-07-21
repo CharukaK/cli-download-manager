@@ -9,9 +9,14 @@ import java.util.Arrays;
 public class App {
     /**
      * Entry point for the app.
+     *
      * @param args
      */
     public static void main(String[] args) {
         Arrays.stream(args).forEach(System.out::println);
+
+        for (String arg : args) {
+
+        }
     }
 }
