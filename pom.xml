@@ -22,6 +22,12 @@
             <artifactId>commons-cli</artifactId>
             <version>${commons.cli.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>${commons.net.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -63,6 +69,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <junit.version>4.11</junit.version>
         <commons.cli.version>1.4</commons.cli.version>
+        <commons.net.version>3.8.0</commons.net.version>
     </properties>
 
 </project>
