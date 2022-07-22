@@ -6,6 +6,8 @@ import com.download.manager.download.DownloadInfo;
 import com.download.manager.download.DownloadManager;
 import com.download.manager.exceptions.DownloadException;
 import com.download.manager.download.DownloadState;
+import java.net.URLEncoder;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +39,9 @@ public class HTTPDownload extends Download {
         logger.info("Initializing download " + downloadConfig.getUrl());
         try {
             url = new URL(this.downloadConfig.getUrl());
+            String fileNameSegment = URLDecoder.decode(FilenameUtils.getName(url.getFile()), StandardCharsets.UTF_8.toString());
+            this.downloadConfig.setFileName(fileNameSegment.contains("?") ?
+                    fileNameSegment.split("\\?")[0] : fileNameSegment);
             getDownloadInfo().setFilePath(downloadConfig.getFullOutputFilePath());
         } catch (IOException e) {
             throw new DownloadException(e.getMessage(), e);
@@ -44,6 +49,7 @@ public class HTTPDownload extends Download {
         updateState(getId(), new DownloadInfo(DownloadState.INITIALIZED, getDownloadInfo().getFilePath()));
         return this;
     }
+
 
     @Override
     public void run() {
@@ -56,10 +62,12 @@ public class HTTPDownload extends Download {
             httpURLConnection.setConnectTimeout(1000);
             httpURLConnection.setReadTimeout(1000);
             httpURLConnection.connect();
-            Map<String, List<String>> fileHeaders = httpURLConnection.getHeaderFields();
-            if (fileHeaders.get("Content-Disposition") != null && fileHeaders.get("Content-Disposition").size() > 0) {
-                // update file name according to server response
-                downloadConfig.setFileName(fileHeaders.get("Content-Disposition").get(0));
+            String raw = httpURLConnection.getHeaderField("Content-Disposition");
+            // raw = "attachment; filename=abc.jpg"
+            if (raw != null && raw.contains("=")) {
+                String fileName = raw.split("=")[1]; //getting value after '='
+                downloadConfig.setFileName(fileName);
+                getDownloadInfo().setFilePath(downloadConfig.getFullOutputFilePath());
             }
             File outputFile = new File(getDownloadInfo().getFilePath());
             FileOutputStream fileOutputStream;
@@ -81,6 +89,8 @@ public class HTTPDownload extends Download {
                         outputFile = new File(getDownloadInfo().getFilePath());
                         index++;
                     }
+                    getDownloadInfo().setFilePath(downloadConfig.getFullOutputFilePath());
+                    updateState(getId(), getDownloadInfo());
                 } else {
                     httpURLConnection.setRequestProperty("Range", String.format("bytes=%s", outputFile.length()));
                 }

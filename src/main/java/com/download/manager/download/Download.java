@@ -6,9 +6,9 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 public abstract class Download implements Runnable {
-    private PropertyChangeSupport support = new PropertyChangeSupport(this);
+    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
     private String id;
-    private DownloadInfo downloadInfo;
+    private DownloadInfo downloadInfo = new DownloadInfo(DownloadState.INITIALIZED, "");
 
     public abstract Download init(DownloadConfig config) throws DownloadException;
 

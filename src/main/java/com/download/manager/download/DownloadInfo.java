@@ -4,9 +4,9 @@ public class DownloadInfo {
     private DownloadState state;
     private String filePath;
 
-    public DownloadInfo(DownloadState state, String fileName) {
+    public DownloadInfo(DownloadState state, String filePath) {
         this.state = state;
-        this.filePath = fileName;
+        this.filePath = filePath;
     }
 
     public DownloadState getState() {

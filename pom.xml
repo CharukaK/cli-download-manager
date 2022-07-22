@@ -32,6 +32,12 @@
             <artifactId>logging</artifactId>
             <version>2.0.17</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -75,6 +81,7 @@
         <commons.cli.version>1.4</commons.cli.version>
         <commons.net.version>3.8.0</commons.net.version>
         <slf4j.version>1.7.5</slf4j.version>
+        <commons.io.version>2.7</commons.io.version>
     </properties>
 
 </project>

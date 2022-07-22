@@ -34,7 +34,7 @@ public class App {
      */
     public static void main(String[] args) {
         try {
-            HttpDownloadConfig httpConfig = new HttpDownloadConfig("https://speed.hetzner.de/100MB.bin");
+            HttpDownloadConfig httpConfig = new HttpDownloadConfig("https://nw15.seedr.cc/ff_get/1208264911/[SubsPlease]%20Yofukashi%20no%20Uta%20-%2003%20(1080p)%20[1959489E].mkv?st=0QzZl77BRx2MUfyVbWD-dA&e=1658617335");
             DownloadManager.getInstance().submitDownload(new HTTPDownload().init(httpConfig));
         } catch (DownloadException e) {
             throw new RuntimeException(e);
