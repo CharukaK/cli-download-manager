@@ -1,15 +1,14 @@
 package com.download.manager.download;
 
 import com.download.manager.exceptions.DownloadException;
-import com.download.manager.util.DownloadState;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 public abstract class Download implements Runnable {
     private PropertyChangeSupport support = new PropertyChangeSupport(this);
-    private DownloadState downloadState;
     private String id;
+    private DownloadInfo downloadInfo;
 
     public abstract Download init(DownloadConfig config) throws DownloadException;
 
@@ -17,14 +16,11 @@ public abstract class Download implements Runnable {
         support.addPropertyChangeListener(pcl);
     }
 
-    public void updateState(String id, DownloadState downloadState) {
-        support.firePropertyChange(id, this.downloadState, downloadState);
-        this.downloadState = downloadState;
+    public void updateState(String id, DownloadInfo downloadInfo) {
+        support.firePropertyChange(id, this.downloadInfo, downloadInfo);
+        this.downloadInfo = downloadInfo;
     }
 
-    public DownloadState getDownloadState() {
-        return downloadState;
-    }
 
     public String getId() {
         return id;
@@ -32,5 +28,9 @@ public abstract class Download implements Runnable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public DownloadInfo getDownloadInfo() {
+        return downloadInfo;
     }
 }

@@ -2,9 +2,10 @@ package com.download.manager.download.http;
 
 import com.download.manager.download.Download;
 import com.download.manager.download.DownloadConfig;
+import com.download.manager.download.DownloadInfo;
 import com.download.manager.download.DownloadManager;
 import com.download.manager.exceptions.DownloadException;
-import com.download.manager.util.DownloadState;
+import com.download.manager.download.DownloadState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +37,11 @@ public class HTTPDownload extends Download {
         logger.info("Initializing download " + downloadConfig.getUrl());
         try {
             url = new URL(this.downloadConfig.getUrl());
-            this.downloadConfig.setFileName(URLDecoder.decode(url.getFile(), StandardCharsets.UTF_8.toString()));
+            getDownloadInfo().setFilePath(downloadConfig.getFullOutputFilePath());
         } catch (IOException e) {
             throw new DownloadException(e.getMessage(), e);
         }
-
-        updateState(getId(), DownloadState.INITIALIZED);
-
+        updateState(getId(), new DownloadInfo(DownloadState.INITIALIZED, getDownloadInfo().getFilePath()));
         return this;
     }
 
@@ -52,7 +51,7 @@ public class HTTPDownload extends Download {
         BufferedOutputStream bufferedOutputStream = null;
         HttpURLConnection httpURLConnection = null;
         try {
-            updateState(getId(), DownloadState.IN_PROGRESS);
+            updateState(getId(), new DownloadInfo(DownloadState.IN_PROGRESS, getDownloadInfo().getFilePath()));
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setConnectTimeout(1000);
             httpURLConnection.setReadTimeout(1000);
@@ -62,8 +61,7 @@ public class HTTPDownload extends Download {
                 // update file name according to server response
                 downloadConfig.setFileName(fileHeaders.get("Content-Disposition").get(0));
             }
-            String outputFilePath = downloadConfig.getFullOutputFilePath();
-            File outputFile = new File(outputFilePath);
+            File outputFile = new File(getDownloadInfo().getFilePath());
             FileOutputStream fileOutputStream;
             if (outputFile.exists()) {
                 if (downloadConfig.getTries() == 0) {
@@ -79,7 +77,8 @@ public class HTTPDownload extends Download {
                     int index = 1;
                     while (outputFile.exists()) {
                         downloadConfig.setFileName(String.format("%s (%s)%s", base, index, ext));
-                        outputFile = new File(downloadConfig.getFullOutputFilePath());
+                        getDownloadInfo().setFilePath(downloadConfig.getFullOutputFilePath());
+                        outputFile = new File(getDownloadInfo().getFilePath());
                         index++;
                     }
                 } else {
@@ -101,13 +100,16 @@ public class HTTPDownload extends Download {
             }
 
             logger.info("Finished download " + downloadConfig.getUrl());
-            updateState(getId(), DownloadState.COMPLETED);
+            updateState(getId(), new DownloadInfo(DownloadState.COMPLETED, getDownloadInfo().getFilePath()));
         } catch (IOException e) {
             downloadConfig.increaseTries();
             try {
-                logger.info("Error in downloading, " + downloadConfig.getUrl() + " Initiating retry");
+                logger.info("Error in downloading, " + downloadConfig.getUrl());
                 if (downloadConfig.getTries() < downloadConfig.getRetryCount()) {
+                    logger.info("Initializing retry, " + downloadConfig.getUrl());
                     DownloadManager.getInstance().submitDownload(new HTTPDownload().init(downloadConfig));
+                } else {
+                    updateState(getId(), new DownloadInfo(DownloadState.FAILED, getDownloadInfo().getFilePath()));
                 }
             } catch (DownloadException ex) {
                 // if downloadConfig exists at this point no exception would occur

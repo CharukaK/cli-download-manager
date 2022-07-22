@@ -1,7 +1,8 @@
-package com.download.manager.util;
+package com.download.manager.download;
 
 public enum DownloadState {
     INITIALIZED,
     IN_PROGRESS,
-    COMPLETED
+    COMPLETED,
+    FAILED
 }
