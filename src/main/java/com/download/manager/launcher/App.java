@@ -36,7 +36,6 @@ public class App {
         try {
             HttpDownloadConfig httpConfig = new HttpDownloadConfig("https://speed.hetzner.de/100MB.bin");
             DownloadManager.getInstance().submitDownload(new HTTPDownload().init(httpConfig));
-            DownloadManager.getInstance().shutdown();
         } catch (DownloadException e) {
             throw new RuntimeException(e);
         }

@@ -1,5 +1,6 @@
 package com.download.manager.download;
 
+import com.download.manager.download.http.HttpDownloadConfig;
 import com.download.manager.util.Constants;
 
 public class DownloadConfig {
@@ -55,4 +56,18 @@ public class DownloadConfig {
     public void increaseTries() {
         this.tries++;
     }
+
+    public String getFullOutputFilePath() {
+        StringBuilder outputPathBuilder = new StringBuilder();
+        outputPathBuilder.append(getOutputDir());
+        if (getFileName().startsWith("/") && getOutputDir().endsWith("/")) {
+            outputPathBuilder.append(getFileName().substring(1));
+        } else if (!getOutputDir().endsWith("/") && !getFileName().startsWith("/")) {
+            outputPathBuilder.append(String.format("/%s", outputPathBuilder.append(getFileName())));
+        } else {
+            outputPathBuilder.append(getFileName());
+        }
+        return outputPathBuilder.toString();
+    }
+
 }
