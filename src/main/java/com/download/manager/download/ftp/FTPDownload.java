@@ -3,23 +3,30 @@ package com.download.manager.download.ftp;
 import com.download.manager.download.Download;
 import com.download.manager.download.DownloadConfig;
 import com.download.manager.download.DownloadInfo;
+import com.download.manager.download.DownloadManager;
 import com.download.manager.download.DownloadState;
+import com.download.manager.download.http.HTTPDownload;
 import com.download.manager.exceptions.DownloadException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTPClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static com.download.manager.download.Util.getNewFileName;
 
 public class FTPDownload extends Download {
+    private final Logger logger = LoggerFactory.getLogger(FTPDownload.class);
     private FTPDownloadConfig config;
 
     @Override
@@ -27,6 +34,7 @@ public class FTPDownload extends Download {
         this.config = (FTPDownloadConfig) config;
         setId(config.getId());
         updateState(getId(), new DownloadInfo(DownloadState.INITIALIZED, ""));
+        logger.info("Initialized download " + ((FTPDownloadConfig) config).getFilePath());
         return this;
     }
 
@@ -34,8 +42,8 @@ public class FTPDownload extends Download {
     public void run() {
         FTPClient ftpClient = new FTPClient();
         FileOutputStream fileOutputStream;
-        BufferedInputStream bufferedInputStream;
-        BufferedOutputStream bufferedOutputStream;
+        InputStream bufferedInputStream = null;
+        BufferedOutputStream bufferedOutputStream = null;
 
         try {
             if (config.getPort().length() == 0) {
@@ -45,9 +53,6 @@ public class FTPDownload extends Download {
             }
             ftpClient.login(config.getUserName(), config.getPassword());
             ftpClient.enterLocalPassiveMode();
-            String fileNameSegment = URLDecoder.decode(FilenameUtils.getName(config.getFileName()), StandardCharsets.UTF_8.toString());
-            config.setFileName(fileNameSegment.contains("?") ?
-                    fileNameSegment.split("\\?")[0] : fileNameSegment);
             File outputFile = new File(config.getFullOutputFilePath());
             if (outputFile.exists()) {
                 if (config.getTries() == 0) {
@@ -64,8 +69,39 @@ public class FTPDownload extends Download {
                 fileOutputStream = new FileOutputStream(outputFile);
             }
             bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+            bufferedInputStream = ftpClient.retrieveFileStream(URLDecoder.decode(config.getFilePath(), StandardCharsets.UTF_8.toString()));
+
+            byte[] buffer = new byte[8192];
+            int byteCount = 0;
+
+            logger.info("Starting download " + config.getFilePath());
+            while ((byteCount = bufferedInputStream.read(buffer)) != -1) {
+                bufferedOutputStream.write(buffer, 0, byteCount);
+
+            }
+
+            logger.info("Finished download " + config.getFilePath());
+            updateState(config.getId(), new DownloadInfo(DownloadState.COMPLETED, getDownloadInfo().getFilePath()));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            try {
+                logger.info("Error in downloading, " + config.getFilePath());
+                if (config.getTries() < config.getRetryCount()) {
+                    logger.info("Initializing retry, " + config.getFilePath());
+                    DownloadManager.getInstance().submitDownload(new FTPDownload().init(config));
+                } else {
+                    updateState(config.getId(), new DownloadInfo(DownloadState.FAILED, getDownloadInfo().getFilePath()));
+                }
+            } catch (DownloadException ex) {
+                // if downloadConfig exists at this point no exception would occur
+            }
+        } finally {
+            try {
+                Objects.requireNonNull(bufferedOutputStream).close();
+                Objects.requireNonNull(bufferedInputStream).close();
+                ftpClient.disconnect();
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 }

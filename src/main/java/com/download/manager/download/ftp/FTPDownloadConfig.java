@@ -1,11 +1,15 @@
 package com.download.manager.download.ftp;
 
 import com.download.manager.download.DownloadConfig;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 public class FTPDownloadConfig extends DownloadConfig {
     private static final Logger logger = LoggerFactory.getLogger(FTPDownloadConfig.class);
@@ -18,17 +22,23 @@ public class FTPDownloadConfig extends DownloadConfig {
     public FTPDownloadConfig(String ftpUrl) {
         try {
             URL parsedURL = new URL(ftpUrl);
-            String[] userInfo = parsedURL.getUserInfo().split(":");
-            if (userInfo.length > 2) {
-                this.userName = userInfo[0];
-                this.password = userInfo[1];
-                this.port = parsedURL.getPort() == -1 ? "": String.valueOf(parsedURL.getPort());
-                this.host = parsedURL.getHost();
-                this.filePath = parsedURL.getPath();
-            }
+            this.userName = parsedURL.getUserInfo().contains(":") ?
+                    parsedURL.getUserInfo().split(":")[0] : parsedURL.getUserInfo();
+            this.password = parsedURL.getUserInfo().contains(":") ?
+                    parsedURL.getUserInfo().split(":")[1] : "";
+
+            this.port = parsedURL.getPort() == -1 ? "" : String.valueOf(parsedURL.getPort());
+            this.host = parsedURL.getHost();
+
+            String fileNameSegment = URLDecoder.decode(FilenameUtils.getName(parsedURL.getFile()), StandardCharsets.UTF_8.toString());
+            setFileName(fileNameSegment.contains("?") ?
+                    fileNameSegment.split("\\?")[0] : fileNameSegment);
+            this.filePath = parsedURL.getPath();
 
         } catch (MalformedURLException e) {
             logger.error(e.getMessage(), e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 
