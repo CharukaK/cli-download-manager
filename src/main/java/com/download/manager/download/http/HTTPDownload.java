@@ -6,7 +6,9 @@ import com.download.manager.download.DownloadInfo;
 import com.download.manager.download.DownloadManager;
 import com.download.manager.exceptions.DownloadException;
 import com.download.manager.download.DownloadState;
+
 import java.net.URLEncoder;
+
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +37,6 @@ public class HTTPDownload extends Download {
     @Override
     public Download init(DownloadConfig config) throws DownloadException {
         this.downloadConfig = (HttpDownloadConfig) config;
-        setId(UUID.randomUUID().toString());
         logger.info("Initializing download " + downloadConfig.getUrl());
         try {
             url = new URL(this.downloadConfig.getUrl());
@@ -46,6 +47,7 @@ public class HTTPDownload extends Download {
         } catch (IOException e) {
             throw new DownloadException(e.getMessage(), e);
         }
+        setId(downloadConfig.getId());
         updateState(getId(), new DownloadInfo(DownloadState.INITIALIZED, getDownloadInfo().getFilePath()));
         return this;
     }
@@ -74,21 +76,9 @@ public class HTTPDownload extends Download {
             if (outputFile.exists()) {
                 if (downloadConfig.getTries() == 0) {
                     // There exist a file name collision
-                    Pattern pattern = Pattern.compile("^(?<base>.+?)\\s*(?:\\((?<idx>\\d+)\\))?(?<ext>\\.[\\w.]+)?$");
-                    Matcher matcher = pattern.matcher(outputFile.getName());
-                    String base = "";
-                    String ext = "";
-                    if (matcher.find()) {
-                        ext = matcher.group("ext");
-                        base = matcher.group("base");
-                    }
-                    int index = 1;
-                    while (outputFile.exists()) {
-                        downloadConfig.setFileName(String.format("%s (%s)%s", base, index, ext));
-                        getDownloadInfo().setFilePath(downloadConfig.getFullOutputFilePath());
-                        outputFile = new File(getDownloadInfo().getFilePath());
-                        index++;
-                    }
+                    outputFile = getNewFileName(outputFile);
+
+                    downloadConfig.setFileName(outputFile.getName());
                     getDownloadInfo().setFilePath(downloadConfig.getFullOutputFilePath());
                     updateState(getId(), getDownloadInfo());
                 } else {
@@ -110,7 +100,7 @@ public class HTTPDownload extends Download {
             }
 
             logger.info("Finished download " + downloadConfig.getUrl());
-            updateState(getId(), new DownloadInfo(DownloadState.COMPLETED, getDownloadInfo().getFilePath()));
+            updateState(downloadConfig.getId(), new DownloadInfo(DownloadState.COMPLETED, getDownloadInfo().getFilePath()));
         } catch (IOException e) {
             downloadConfig.increaseTries();
             try {
@@ -119,7 +109,7 @@ public class HTTPDownload extends Download {
                     logger.info("Initializing retry, " + downloadConfig.getUrl());
                     DownloadManager.getInstance().submitDownload(new HTTPDownload().init(downloadConfig));
                 } else {
-                    updateState(getId(), new DownloadInfo(DownloadState.FAILED, getDownloadInfo().getFilePath()));
+                    updateState(downloadConfig.getId(), new DownloadInfo(DownloadState.FAILED, getDownloadInfo().getFilePath()));
                 }
             } catch (DownloadException ex) {
                 // if downloadConfig exists at this point no exception would occur
@@ -134,5 +124,22 @@ public class HTTPDownload extends Download {
                 logger.error(e.getMessage(), e);
             }
         }
+    }
+
+    private File getNewFileName(File outputFile) {
+        Pattern pattern = Pattern.compile("^(?<base>.+?)\\s*(?:\\((?<idx>\\d+)\\))?(?<ext>\\.[\\w.]+)?$");
+        Matcher matcher = pattern.matcher(outputFile.getName());
+        String base = "";
+        String ext = "";
+        if (matcher.find()) {
+            ext = matcher.group("ext");
+            base = matcher.group("base");
+        }
+        int index = 1;
+        while (outputFile.exists()) {
+            outputFile = new File(String.format("%s/%s (%s)%s", outputFile.getParentFile().toString(), base, index, ext));
+            index++;
+        }
+        return outputFile;
     }
 }

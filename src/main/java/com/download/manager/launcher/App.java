@@ -1,12 +1,14 @@
 package com.download.manager.launcher;
 
 
+import com.download.manager.download.Download;
+import com.download.manager.download.DownloadFactory;
 import com.download.manager.download.DownloadManager;
-import com.download.manager.download.http.HTTPDownload;
-import com.download.manager.download.http.HttpDownloadConfig;
 import com.download.manager.exceptions.DownloadException;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -15,11 +17,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,18 +28,35 @@ import java.util.Map;
  * This class would be the entry point for the application and contains the main method.
  */
 public class App {
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
     /**
      * Entry point for the app.
      *
      * @param args
      */
     public static void main(String[] args) {
-        try {
-            HttpDownloadConfig httpConfig = new HttpDownloadConfig("https://nw15.seedr.cc/ff_get/1208264911/[SubsPlease]%20Yofukashi%20no%20Uta%20-%2003%20(1080p)%20[1959489E].mkv?st=0QzZl77BRx2MUfyVbWD-dA&e=1658617335");
-            DownloadManager.getInstance().submitDownload(new HTTPDownload().init(httpConfig));
-        } catch (DownloadException e) {
-            throw new RuntimeException(e);
+        List<List<String>> downloadList = new ArrayList<>();
+        int index = -1;
+        for (String arg : args) {
+            if (arg.equals("-a")) {
+                index++;
+                downloadList.add(new ArrayList<>());
+            } else {
+                downloadList.get(index).add(arg);
+            }
         }
+
+        downloadList.forEach(listItem -> {
+            Download download = null;
+            try {
+                download = DownloadFactory.generateDownloadRunnable(listItem.toArray());
+                if (download != null) {
+                    DownloadManager.getInstance().submitDownload(download);
+                }
+            } catch (DownloadException e) {
+                logger.error(e.getErrorMessage(), e);
+            }
+        });
     }
 
     static void downloadUsingFTP() {
