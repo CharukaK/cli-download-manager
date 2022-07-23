@@ -4,11 +4,8 @@ import com.download.manager.download.Download;
 import com.download.manager.download.DownloadConfig;
 import com.download.manager.download.DownloadInfo;
 import com.download.manager.download.DownloadManager;
-import com.download.manager.exceptions.DownloadException;
 import com.download.manager.download.DownloadState;
-
-import java.net.URLEncoder;
-
+import com.download.manager.exceptions.DownloadException;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +19,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static com.download.manager.download.Util.getNewFileName;
 
 public class HTTPDownload extends Download {
     private final Logger logger = LoggerFactory.getLogger(HTTPDownload.class);
@@ -77,7 +71,6 @@ public class HTTPDownload extends Download {
                 if (downloadConfig.getTries() == 0) {
                     // There exist a file name collision
                     outputFile = getNewFileName(outputFile);
-
                     downloadConfig.setFileName(outputFile.getName());
                     getDownloadInfo().setFilePath(downloadConfig.getFullOutputFilePath());
                     updateState(getId(), getDownloadInfo());
@@ -91,8 +84,8 @@ public class HTTPDownload extends Download {
             bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
             bufferedInputStream = new BufferedInputStream(httpURLConnection.getInputStream());
             byte[] buffer = new byte[8192];
-            System.out.println("download started");
             int byteCount = 0;
+
             logger.info("Starting download " + downloadConfig.getUrl());
             while ((byteCount = bufferedInputStream.read(buffer)) != -1) {
                 bufferedOutputStream.write(buffer, 0, byteCount);
@@ -126,20 +119,4 @@ public class HTTPDownload extends Download {
         }
     }
 
-    private File getNewFileName(File outputFile) {
-        Pattern pattern = Pattern.compile("^(?<base>.+?)\\s*(?:\\((?<idx>\\d+)\\))?(?<ext>\\.[\\w.]+)?$");
-        Matcher matcher = pattern.matcher(outputFile.getName());
-        String base = "";
-        String ext = "";
-        if (matcher.find()) {
-            ext = matcher.group("ext");
-            base = matcher.group("base");
-        }
-        int index = 1;
-        while (outputFile.exists()) {
-            outputFile = new File(String.format("%s/%s (%s)%s", outputFile.getParentFile().toString(), base, index, ext));
-            index++;
-        }
-        return outputFile;
-    }
 }

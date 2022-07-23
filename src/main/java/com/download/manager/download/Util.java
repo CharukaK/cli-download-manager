@@ -1,0 +1,25 @@
+package com.download.manager.download;
+
+import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Util {
+
+    public static File getNewFileName(File outputFile) {
+        Pattern pattern = Pattern.compile("^(?<base>.+?)\\s*(?:\\((?<idx>\\d+)\\))?(?<ext>\\.[\\w.]+)?$");
+        Matcher matcher = pattern.matcher(outputFile.getName());
+        String base = "";
+        String ext = "";
+        if (matcher.find()) {
+            ext = matcher.group("ext");
+            base = matcher.group("base");
+        }
+        int index = 1;
+        while (outputFile.exists()) {
+            outputFile = new File(String.format("%s/%s (%s)%s", outputFile.getParentFile().toString(), base, index, ext));
+            index++;
+        }
+        return outputFile;
+    }
+}
