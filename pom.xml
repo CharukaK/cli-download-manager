@@ -38,6 +38,11 @@
             <artifactId>commons-io</artifactId>
             <version>${commons.io.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-vfs2</artifactId>
+            <version>${commons.vfs2.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -82,6 +87,7 @@
         <commons.net.version>3.8.0</commons.net.version>
         <slf4j.version>1.7.5</slf4j.version>
         <commons.io.version>2.7</commons.io.version>
+        <commons.vfs2.version>2.4</commons.vfs2.version>
     </properties>
 
 </project>
