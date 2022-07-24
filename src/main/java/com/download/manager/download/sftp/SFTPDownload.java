@@ -82,9 +82,9 @@ public class SFTPDownload extends Download {
                 logger.error(e.getMessage(), e);
             }
 
-            logger.info("Attempting retry for download " + sftpConfig.getSftpUrl());
             try {
                 if (sftpConfig.getTries() < sftpConfig.getRetryCount()) {
+                    logger.info("Attempting retry for download " + sftpConfig.getSftpUrl());
                     sftpConfig.increaseTries();
                     DownloadManager.getInstance().submitDownload(new SFTPDownload().init(sftpConfig));
                 } else {

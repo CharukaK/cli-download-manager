@@ -92,11 +92,18 @@ public class HTTPDownload extends Download {
             logger.info("Finished download " + downloadConfig.getUrl());
             updateState(downloadConfig.getId(), new DownloadInfo(DownloadState.COMPLETED, getDownloadInfo().getFilePath()));
         } catch (IOException e) {
+            logger.info("Error in downloading, " + downloadConfig.getUrl());
             downloadConfig.increaseTries();
+
             try {
-                logger.info("Error in downloading, " + downloadConfig.getUrl());
+                Thread.sleep(downloadConfig.getRetryInterval());
+            } catch (InterruptedException ex) {
+                logger.error(e.getMessage(), e);
+            }
+
+            try {
                 if (downloadConfig.getTries() < downloadConfig.getRetryCount()) {
-                    logger.info("Initializing retry, " + downloadConfig.getUrl());
+                    logger.info("Attempting retry for download " + downloadConfig.getUrl());
                     DownloadManager.getInstance().submitDownload(new HTTPDownload().init(downloadConfig));
                 } else {
                     updateState(downloadConfig.getId(), new DownloadInfo(DownloadState.FAILED, getDownloadInfo().getFilePath()));

@@ -75,11 +75,18 @@ public class FTPDownload extends Download {
             logger.info("Finished download " + config.getFilePath());
             updateState(config.getId(), new DownloadInfo(DownloadState.COMPLETED, getDownloadInfo().getFilePath()));
         } catch (IOException e) {
+            config.increaseTries();
+            try {
+                Thread.sleep(config.getRetryInterval());
+            } catch (InterruptedException ex) {
+                logger.error(e.getMessage(), e);
+            }
+
             try {
                 logger.info("Error in downloading, " + config.getFilePath());
+
                 if (config.getTries() < config.getRetryCount()) {
-                    logger.info("Initializing retry, " + config.getFilePath());
-                    config.increaseTries();
+                    logger.info("Attempting retry for download " + config.getFilePath());
                     DownloadManager.getInstance().submitDownload(new FTPDownload().init(config));
                 } else {
                     updateState(config.getId(), new DownloadInfo(DownloadState.FAILED, getDownloadInfo().getFilePath()));
