@@ -10,6 +10,6 @@ public class Constants {
     public static int DEFAULT_RETRY_COUNT = 2;
     public static int DEFAULT_RETRY_INTERVAL = 1000; // in milliseconds
 
-    public static String OUTPUT_DIR = "./"; // in milliseconds
+    public static String DEFAULT_OUTPUT_DIR = "./"; // in milliseconds
 
 }

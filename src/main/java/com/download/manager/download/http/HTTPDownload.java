@@ -21,7 +21,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import static com.download.manager.download.Util.getNewFileName;
+import static com.download.manager.download.DownloadUtil.getNewFileName;
 
 public class HTTPDownload extends Download {
     private final Logger logger = LoggerFactory.getLogger(HTTPDownload.class);

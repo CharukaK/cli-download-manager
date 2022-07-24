@@ -22,7 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.download.manager.download.Util.getNewFileName;
+import static com.download.manager.download.DownloadUtil.getNewFileName;
 
 public class SFTPDownload extends Download {
     private final Logger logger = LoggerFactory.getLogger(SFTPDownload.class);

@@ -1,14 +1,16 @@
 package com.download.manager.download;
 
+import com.download.manager.util.Constants;
+
 public class GlobalConfig {
     private int retryCount;
     private int retryInterval; // milliseconds
     private String downloadDir;
 
     public GlobalConfig() {
-        retryCount = 3;
-        retryInterval = 1000;
-        downloadDir = "./";
+        retryCount = Constants.DEFAULT_RETRY_COUNT;
+        retryInterval = Constants.DEFAULT_RETRY_INTERVAL;
+        downloadDir = Constants.DEFAULT_OUTPUT_DIR;
     }
 
     public int getRetryCount() {

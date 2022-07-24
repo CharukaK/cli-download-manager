@@ -15,7 +15,7 @@ public class DownloadConfig {
     public DownloadConfig() {
         this.retryCount = Constants.DEFAULT_RETRY_COUNT;
         this.retryInterval = Constants.DEFAULT_RETRY_INTERVAL;
-        this.outputDir = Constants.OUTPUT_DIR;
+        this.outputDir = Constants.DEFAULT_OUTPUT_DIR;
         this.tries = 0;
         this.id = UUID.randomUUID().toString();
     }
