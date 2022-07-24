@@ -8,8 +8,6 @@ import com.download.manager.download.sftp.SFTPConfig;
 import com.download.manager.download.sftp.SFTPDownload;
 import com.download.manager.exceptions.DownloadException;
 
-import java.util.Arrays;
-
 public class DownloadFactory {
     public static Download generateDownloadRunnable(Object[] args) throws DownloadException {
         if (((String) args[0]).startsWith("http")) {

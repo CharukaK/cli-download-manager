@@ -2,8 +2,6 @@ package com.download.manager.download.http;
 
 import com.download.manager.download.DownloadConfig;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +23,7 @@ public class HttpDownloadConfig extends DownloadConfig {
 
     /**
      * Adds a new header if it doesn't exist, if it does old value will be replaced by the new.
+     *
      * @param key
      * @param value
      */

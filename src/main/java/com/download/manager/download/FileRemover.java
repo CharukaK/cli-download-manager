@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-public class FileRemover implements Runnable{
+public class FileRemover implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(FileRemover.class);
     private final String filePath;
 

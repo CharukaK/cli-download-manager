@@ -1,6 +1,5 @@
 package com.download.manager.download;
 
-import com.download.manager.download.http.HttpDownloadConfig;
 import com.download.manager.util.Constants;
 
 import java.util.UUID;

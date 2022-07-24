@@ -32,7 +32,6 @@
             <artifactId>logging</artifactId>
             <version>2.0.17</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -43,7 +42,6 @@
             <artifactId>commons-vfs2</artifactId>
             <version>${commons.vfs2.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.jcraft/jsch -->
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>

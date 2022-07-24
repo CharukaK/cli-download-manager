@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
@@ -18,10 +18,10 @@ public class SFTPConfig extends DownloadConfig {
     public SFTPConfig(String sftpUrl) {
         this.sftpUrl = sftpUrl;
         try {
-            URL parsedURL = new URL(sftpUrl.substring(1));
-            String fileNameSegment = URLDecoder.decode(FilenameUtils.getName(parsedURL.getFile()), StandardCharsets.UTF_8.toString());
+            URI parsedURL = new URI(sftpUrl.substring(1));
+            String fileNameSegment = URLDecoder.decode(FilenameUtils.getName(parsedURL.getPath()), StandardCharsets.UTF_8.toString());
             setFileName(fileNameSegment);
-        } catch (MalformedURLException | UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException | URISyntaxException e) {
             logger.error(e.getMessage(), e);
         }
     }
