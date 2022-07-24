@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class DownloadConfigTests {
+public class DownloadConfigTest {
     @Test
     public void testFtpUrlWithoutPort() {
         FTPDownloadConfig downloadConfig = new FTPDownloadConfig("ftp://user:password@hello.io/test.txt");
