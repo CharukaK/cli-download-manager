@@ -35,3 +35,11 @@ following config options are supported at the moment:
 - `--output-dir` = Output directory for the downloaded files
 
 Note: URLs for downloads should be provided with `-a` arguments, you can submit any number of downloads
+
+URLs for SFTP and FTP should follow the format
+
+- FTP
+   `ftp://<user>:<password>@<host>:<port>/<filepath>`
+- SFTP
+  `sftp://<user>:<password>@<host>:<port>//<filepath>`
+
