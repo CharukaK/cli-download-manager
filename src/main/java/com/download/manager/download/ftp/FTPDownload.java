@@ -1,10 +1,10 @@
 package com.download.manager.download.ftp;
 
 import com.download.manager.download.Download;
-import com.download.manager.download.DownloadConfig;
-import com.download.manager.download.DownloadInfo;
+import com.download.manager.download.models.DownloadConfig;
+import com.download.manager.download.models.DownloadInfo;
 import com.download.manager.download.DownloadManager;
-import com.download.manager.download.DownloadState;
+import com.download.manager.download.models.DownloadState;
 import com.download.manager.exceptions.DownloadException;
 import org.apache.commons.net.ftp.FTPClient;
 import org.slf4j.Logger;
@@ -21,6 +21,9 @@ import java.util.Objects;
 
 import static com.download.manager.download.DownloadUtil.getNewFileName;
 
+/**
+ * Client class to handle FTP downloads
+ */
 public class FTPDownload extends Download {
     private final Logger logger = LoggerFactory.getLogger(FTPDownload.class);
     private FTPDownloadConfig config;

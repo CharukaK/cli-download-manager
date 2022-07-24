@@ -5,6 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+/**
+ * Runnable that handles deletion of partial files of failed downloads.
+ */
 public class FileRemover implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(FileRemover.class);
     private final String filePath;

@@ -3,7 +3,7 @@ package com.download.manager.launcher;
 import com.download.manager.download.Download;
 import com.download.manager.download.DownloadFactory;
 import com.download.manager.download.DownloadManager;
-import com.download.manager.download.GlobalConfig;
+import com.download.manager.download.models.GlobalConfig;
 import com.download.manager.exceptions.DownloadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

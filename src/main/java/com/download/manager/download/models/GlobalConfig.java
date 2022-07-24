@@ -1,7 +1,10 @@
-package com.download.manager.download;
+package com.download.manager.download.models;
 
 import com.download.manager.util.Constants;
 
+/**
+ * Class to hold configurations that is common to all downloads.
+ */
 public class GlobalConfig {
     private int retryCount;
     private int retryInterval; // milliseconds

@@ -4,8 +4,16 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Util class for downloads package
+ */
 public class DownloadUtil {
 
+    /**
+     * Method to resolve name clashes
+     * @param outputFile File object with name clash
+     * @return New File object with resolved name clash
+     */
     public static File getNewFileName(File outputFile) {
         Pattern pattern = Pattern.compile("^(?<base>.+?)\\s*(?:\\((?<idx>\\d+)\\))?(?<ext>\\.[\\w.]+)?$");
         Matcher matcher = pattern.matcher(outputFile.getName());

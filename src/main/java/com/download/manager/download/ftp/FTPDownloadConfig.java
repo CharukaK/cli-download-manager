@@ -1,6 +1,6 @@
 package com.download.manager.download.ftp;
 
-import com.download.manager.download.DownloadConfig;
+import com.download.manager.download.models.DownloadConfig;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +11,9 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Class containing FTP protocol configurations
+ */
 public class FTPDownloadConfig extends DownloadConfig {
     private static final Logger logger = LoggerFactory.getLogger(FTPDownloadConfig.class);
     private String userName;

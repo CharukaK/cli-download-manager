@@ -1,5 +1,8 @@
 package com.download.manager.download;
 
+import com.download.manager.download.models.DownloadInfo;
+import com.download.manager.download.models.DownloadState;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
@@ -7,6 +10,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * DownloadManager class that keep track on downloads and manages the executor service.
+ */
 public class DownloadManager implements PropertyChangeListener {
     private static DownloadManager downloadManager;
     private final ExecutorService executorService;

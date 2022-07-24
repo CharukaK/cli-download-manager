@@ -1,6 +1,6 @@
 package com.download.manager.download.http;
 
-import com.download.manager.download.DownloadConfig;
+import com.download.manager.download.models.DownloadConfig;
 
 import java.util.HashMap;
 import java.util.Map;

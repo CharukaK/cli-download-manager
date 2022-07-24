@@ -1,9 +1,12 @@
-package com.download.manager.download;
+package com.download.manager.download.models;
 
 import com.download.manager.util.Constants;
 
 import java.util.UUID;
 
+/**
+ * Base class for Download client configurations
+ */
 public class DownloadConfig {
     private int retryCount;
     private int retryInterval;

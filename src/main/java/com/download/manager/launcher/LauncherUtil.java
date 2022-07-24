@@ -1,6 +1,6 @@
 package com.download.manager.launcher;
 
-import com.download.manager.download.GlobalConfig;
+import com.download.manager.download.models.GlobalConfig;
 import com.download.manager.exceptions.DownloadException;
 import com.download.manager.util.Constants;
 

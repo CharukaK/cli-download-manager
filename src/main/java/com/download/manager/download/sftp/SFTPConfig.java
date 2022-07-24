@@ -1,6 +1,6 @@
 package com.download.manager.download.sftp;
 
-import com.download.manager.download.DownloadConfig;
+import com.download.manager.download.models.DownloadConfig;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +11,9 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Class containing SFTP download configuration
+ */
 public class SFTPConfig extends DownloadConfig {
     private final Logger logger = LoggerFactory.getLogger(SFTPConfig.class);
     private String sftpUrl;

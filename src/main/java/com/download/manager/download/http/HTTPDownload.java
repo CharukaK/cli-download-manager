@@ -1,10 +1,10 @@
 package com.download.manager.download.http;
 
 import com.download.manager.download.Download;
-import com.download.manager.download.DownloadConfig;
-import com.download.manager.download.DownloadInfo;
+import com.download.manager.download.models.DownloadConfig;
+import com.download.manager.download.models.DownloadInfo;
 import com.download.manager.download.DownloadManager;
-import com.download.manager.download.DownloadState;
+import com.download.manager.download.models.DownloadState;
 import com.download.manager.exceptions.DownloadException;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -23,6 +23,9 @@ import java.util.Objects;
 
 import static com.download.manager.download.DownloadUtil.getNewFileName;
 
+/**
+ * Client class for HTTP/HTTPS downloads
+ */
 public class HTTPDownload extends Download {
     private final Logger logger = LoggerFactory.getLogger(HTTPDownload.class);
     private HttpDownloadConfig downloadConfig;
