@@ -1,18 +1,15 @@
 package com.download.manager;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import com.download.manager.download.DownloadConfig;
 import com.download.manager.download.GlobalConfig;
 import com.download.manager.exceptions.DownloadException;
 import com.download.manager.launcher.LauncherUtil;
 import com.download.manager.util.Constants;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test for simple App.

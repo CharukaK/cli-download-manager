@@ -9,6 +9,7 @@ import java.util.Map;
  * Download config for HTTP resources
  */
 public class HttpDownloadConfig extends DownloadConfig {
+    // TODO: 7/24/22 allow submitting header entries through commandline arguments 
     private final Map<String, String> headers;
     private final String url;
 
