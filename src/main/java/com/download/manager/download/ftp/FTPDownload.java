@@ -5,15 +5,11 @@ import com.download.manager.download.DownloadConfig;
 import com.download.manager.download.DownloadInfo;
 import com.download.manager.download.DownloadManager;
 import com.download.manager.download.DownloadState;
-import com.download.manager.download.http.HTTPDownload;
 import com.download.manager.exceptions.DownloadException;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,11 +60,8 @@ public class FTPDownload extends Download {
                 } else {
                     ftpClient.setRestartOffset(outputFile.length());
                 }
-                fileOutputStream = new FileOutputStream(outputFile);
-            } else {
-                fileOutputStream = new FileOutputStream(outputFile);
             }
-            bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+            bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
             bufferedInputStream = ftpClient.retrieveFileStream(URLDecoder.decode(config.getFilePath(), StandardCharsets.UTF_8.toString()));
 
             byte[] buffer = new byte[8192];
@@ -77,7 +70,6 @@ public class FTPDownload extends Download {
             logger.info("Starting download " + config.getFilePath());
             while ((byteCount = bufferedInputStream.read(buffer)) != -1) {
                 bufferedOutputStream.write(buffer, 0, byteCount);
-
             }
 
             logger.info("Finished download " + config.getFilePath());
@@ -87,6 +79,7 @@ public class FTPDownload extends Download {
                 logger.info("Error in downloading, " + config.getFilePath());
                 if (config.getTries() < config.getRetryCount()) {
                     logger.info("Initializing retry, " + config.getFilePath());
+                    config.increaseTries();
                     DownloadManager.getInstance().submitDownload(new FTPDownload().init(config));
                 } else {
                     updateState(config.getId(), new DownloadInfo(DownloadState.FAILED, getDownloadInfo().getFilePath()));

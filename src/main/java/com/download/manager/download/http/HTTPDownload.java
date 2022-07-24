@@ -66,7 +66,6 @@ public class HTTPDownload extends Download {
                 getDownloadInfo().setFilePath(downloadConfig.getFullOutputFilePath());
             }
             File outputFile = new File(getDownloadInfo().getFilePath());
-            FileOutputStream fileOutputStream;
             if (outputFile.exists()) {
                 if (downloadConfig.getTries() == 0) {
                     // There exist a file name collision
@@ -77,11 +76,9 @@ public class HTTPDownload extends Download {
                 } else {
                     httpURLConnection.setRequestProperty("Range", String.format("bytes=%s", outputFile.length()));
                 }
-                fileOutputStream = new FileOutputStream(outputFile);
-            } else {
-                fileOutputStream = new FileOutputStream(outputFile);
             }
-            bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+
+            bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
             bufferedInputStream = new BufferedInputStream(httpURLConnection.getInputStream());
             byte[] buffer = new byte[8192];
             int byteCount = 0;
