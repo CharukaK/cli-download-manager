@@ -21,6 +21,17 @@ features:
 2. Run the command `mvn clean install` from the root directory
 
 
-## Trying the tool
+## Using the tool
+Once you have built the tool you can find the distribution inside the `target` folder extract the zip called `downloadman.zip`. Once you extract that you can run the program using the `downloadman.sh` file.
 
+The command takes the following format
+```shell
+./downloadman.sh [config-options] -a [url1] -a [url2] ....
+```
 
+following config options are supported at the moment:
+- `--retry-count` = number of retries per download
+- `--retry-interval` = amount of time in milliseconds to wait until next retry
+- `--output-dir` = Output directory for the downloaded files
+
+Note: URLs for downloads should be provided with `-a` arguments, you can submit any number of downloads
